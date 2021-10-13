@@ -24,3 +24,5 @@ mvn archetype:generate                      \
    2. For Visual representation of threads, `@CucumberOptions(plugin= {"timeline:<report folder>"})`
       ![Cucumber threads visual](cucumber-threads-report.png)
 4. Add Appium's 'java-client'. See [How to install latest java client Beta/Snapshots](https://github.com/appium/java-client#how-to-install-latest-java-client-betasnapshots)
+5. Add example Gherkin and glue code for Login feature. See templates from [The starting of an app](https://github.com/appium/java-client/blob/master/docs/The-starting-of-an-Android-app.md)
+   ![Example cucumber report](cucumber-report-1.png)
