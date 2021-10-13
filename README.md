@@ -2,8 +2,8 @@
 
 Quick start for different test automation tools.
 
-## Folders
-+ **appium-cucumber-testng** : mvn, java, appium, cucumber, testng quick start.
+## Samples
++ Sample 1: **[appium-testng-cucumber](appium-testng-cucumber/README.md)** : mvn failsafe, java, appium, cucumber, testng
   + testng : Enables running Scenario in parallel
 
 ## Branching strategy
