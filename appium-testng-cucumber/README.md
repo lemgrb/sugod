@@ -26,3 +26,5 @@ mvn archetype:generate                      \
 4. Add Appium's 'java-client'. See [How to install latest java client Beta/Snapshots](https://github.com/appium/java-client#how-to-install-latest-java-client-betasnapshots)
 5. Add example Gherkin and glue code for Login feature. See templates from [The starting of an app](https://github.com/appium/java-client/blob/master/docs/The-starting-of-an-Android-app.md)
    ![Example cucumber report](cucumber-report-1.png)
+6. Add screenshot on failure in @After hook. Read more [here](https://cucumber.io/docs/guides/browser-automation/)
+   ![Screenshot on failure](cucumber-report-screenshot-on-failure.png)

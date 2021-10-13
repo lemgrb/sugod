@@ -7,10 +7,13 @@ import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.cucumber.java.After;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -25,7 +28,7 @@ import java.time.Duration;
 
 public class StepDefinitions {
 
-    private static long TIMEOUT_IN_SECONDS = 60;
+    private static long TIMEOUT_IN_SECONDS = 10;
     private ThreadLocal<AppiumDriver<MobileElement>> driver;
 
     @Given("Step from {string} in {string} feature file")
@@ -101,7 +104,11 @@ public class StepDefinitions {
     }
 
     @After
-    public void teardown() {
+    public void teardown(Scenario scenario) {
+        if (scenario.isFailed()) {
+            byte[] screenshot = ((TakesScreenshot) driver.get()).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png", "name");
+        }
         if(driver!=null && driver.get()!=null)
             driver.get().quit();
     }
