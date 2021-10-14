@@ -1,3 +1,22 @@
+## Areas of concern
+
+| Concern | Implemented | Comment |
+|---|---|---|
+| Test data management | ✔ | Test data embedded in feature files. Add POI as dependency if need to read test data from Excel. See [ExcelTestDataReader](https://github.com/lemgrb/testtemplates/blob/main/e2eweb/src/test/java/io/github/lemgrb/testtemplates/e2eweb/utilities/ExcelTestDataReader.java) as sample   |
+| Assertion library | ✔ |TestNG |
+| Screenshots and videos | ✔ |Cucumber's Scenario.attach in @After hook for screenshots. For vids, just use built in recording from e.g. Saucelabs |
+| Reports | ✔|Using cucumber plugins (HTML, timeline) |
+| Parallel execution | ✔ |Maven FailSafe plugin's parallel feature; Java's ThreadLocal class|
+| Data-driven tests | ✔ |Cucumber's Scenario outline, or TestNG's data provider | 
+| Keyword-driven tests | ❌ |  | 
+| Logging and telemetry | ❌ | Just use @slf4j paired with lombok for logging. Also read more about Jaeger - OpenTelemetry  [here (https://www.selenium.dev/documentation/grid/advanced_features/observability/)|
+| Automation library | ✔ |Appium (extends Selenium) |
+| Design pattern : Page Object Model |❌ | Not implemented |
+| Design pattern : Fluent interface | ❌ |Not implemented |
+| Where are the test cases 'stored'? | ✔ |In cucumber .feature files |
+| BDD | ✔ |Cucumber + Gherkin |
+| Remote execution and cross-browser testing | ❌ | Plan to use Saucelabs or similar service |
+
 ## Pre-requisite
 1. Install java
 2. Install mvn
