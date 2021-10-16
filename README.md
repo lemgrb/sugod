@@ -6,6 +6,7 @@ Quick start for different test automation tools.
 + Sample 1: **[appium-testng-cucumber](appium-testng-cucumber/README.md)** : mvn failsafe, java, appium, cucumber, testng
   + testng : Enables running Scenario in parallel
 + Sample 2: **[appium-wdio](appium-wdio/README.md)** : node, javascript, appium, webdriver.io
++ Sample 3: **[postman](postman/README.md)** : node, js, postman, newman
 
 ## Branching strategy
 

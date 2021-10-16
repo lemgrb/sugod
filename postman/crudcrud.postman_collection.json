@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "7d1ef991-3502-49e1-9e3a-c41775584b4a",
+		"name": "crudcrud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create books from csv",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const books = data.books;\r",
+							"const totalBooks = data.books.length;\r",
+							"pm.globals.set(\"totalBooks\", totalBooks);\r",
+							"let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+							"pm.globals.set(\"title\", books[currentBookId].title);\r",
+							"pm.globals.set(\"author\", books[currentBookId].author);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 created\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API returns the same title\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.title).to.eql(pm.globals.get(\"title\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API returns the same author\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.author).to.eql(pm.globals.get(\"author\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API returns a new id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"let totalBooks = pm.globals.get(\"totalBooks\")\r",
+							"let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+							"console.log(\"currentBookId=\"+currentBookId + \"<\" + \"totalBooks=\"+totalBooks)\r",
+							"if(++currentBookId < totalBooks) {\r",
+							"    pm.collectionVariables.set(\"currentBookId\", currentBookId);\r",
+							"    postman.setNextRequest(\"Create books from csv\")\r",
+							"} else\r",
+							"    postman.setNextRequest(\"Get all books\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"author\": \"{{author}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}/books",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All books should have a title\", function () {\r",
+							"    const books = pm.response.json()\r",
+							"    pm.expect(books.every((book)=>{\r",
+							"        return book.title !== undefined\r",
+							"    })).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.globals.set(\"allBooks\", pm.response.json());\r",
+							"pm.globals.set(\"deleteBookIdCounter\", 0);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/books",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete book one by one",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const books = pm.globals.get(\"allBooks\");\r",
+							"console.log(books)\r",
+							"pm.globals.set(\"totalBooksFromResponse\", books.length)\r",
+							"pm.globals.set(\"bookId\",books[pm.globals.get(\"deleteBookIdCounter\")]._id)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let deleteBookIdCounter = pm.globals.get(\"deleteBookIdCounter\")\r",
+							"\r",
+							"if(++deleteBookIdCounter < pm.globals.get(\"totalBooksFromResponse\")){\r",
+							"    pm.globals.set(\"deleteBookIdCounter\", deleteBookIdCounter)\r",
+							"    postman.setNextRequest(\"Delete book one by one\")\r",
+							"}else {\r",
+							"    pm.globals.unset(\"title\")\r",
+							"    pm.globals.unset(\"author\")\r",
+							"    pm.globals.unset(\"totalBooks\")\r",
+							"    pm.collectionVariables.set(\"currentBookId\", 0)\r",
+							"    pm.globals.unset(\"allBooks\")\r",
+							"    pm.globals.unset(\"totalBooksFromResponse\")\r",
+							"    pm.globals.unset(\"bookId\")\r",
+							"    pm.globals.unset(\"deleteBookIdCounter\")\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/books/{{bookId}}",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "currentBookId",
+			"value": "0"
+		}
+	]
+}

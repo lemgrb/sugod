@@ -1,0 +1,2213 @@
+{
+  "collection": {
+    "_": {
+      "postman_id": "7d1ef991-3502-49e1-9e3a-c41775584b4a"
+    },
+    "item": [
+      {
+        "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+        "name": "Create books from csv",
+        "request": {
+          "url": {
+            "path": [
+              "books"
+            ],
+            "host": [
+              "{{endpoint}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"author\": \"{{author}}\"\r\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "7af717c1-906d-4cb9-adb9-e45b8af93014",
+              "type": "text/javascript",
+              "exec": [
+                "const books = data.books;\r",
+                "const totalBooks = data.books.length;\r",
+                "pm.globals.set(\"totalBooks\", totalBooks);\r",
+                "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                "pm.globals.set(\"title\", books[currentBookId].title);\r",
+                "pm.globals.set(\"author\", books[currentBookId].author);"
+              ],
+              "_lastExecutionId": "ec0b8cc5-5743-49ad-a467-0b32d30847fb"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "f87a701e-abf3-472d-a70c-8360a3c29e82",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"Status code is 201 created\", function () {\r",
+                "    pm.response.to.have.status(201);\r",
+                "});\r",
+                "\r",
+                "pm.test(\"API returns the same title\", function () {\r",
+                "    var jsonData = pm.response.json();\r",
+                "    pm.expect(jsonData.title).to.eql(pm.globals.get(\"title\"));\r",
+                "});\r",
+                "\r",
+                "pm.test(\"API returns the same author\", function () {\r",
+                "    var jsonData = pm.response.json();\r",
+                "    pm.expect(jsonData.author).to.eql(pm.globals.get(\"author\"));\r",
+                "});\r",
+                "\r",
+                "pm.test(\"API returns a new id\", function () {\r",
+                "    var jsonData = pm.response.json();\r",
+                "    pm.expect(jsonData.id).to.not.be.null;\r",
+                "});\r",
+                "\r",
+                "let totalBooks = pm.globals.get(\"totalBooks\")\r",
+                "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                "console.log(\"currentBookId=\"+currentBookId + \"<\" + \"totalBooks=\"+totalBooks)\r",
+                "if(++currentBookId < totalBooks) {\r",
+                "    pm.collectionVariables.set(\"currentBookId\", currentBookId);\r",
+                "    postman.setNextRequest(\"Create books from csv\")\r",
+                "} else\r",
+                "    postman.setNextRequest(\"Get all books\")"
+              ],
+              "_lastExecutionId": "b1f93fce-e907-4c0e-997d-bd630965e1c8"
+            }
+          }
+        ]
+      },
+      {
+        "id": "53d3dddf-fd6f-434f-9393-888079ba0c3c",
+        "name": "Get all books",
+        "request": {
+          "url": {
+            "path": [
+              "books"
+            ],
+            "host": [
+              "{{endpoint}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "fbf23663-583e-459e-8944-bc53d0111155",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {\r",
+                "    pm.response.to.have.status(200);\r",
+                "});\r",
+                "\r",
+                "pm.test(\"All books should have a title\", function () {\r",
+                "    const books = pm.response.json()\r",
+                "    pm.expect(books.every((book)=>{\r",
+                "        return book.title !== undefined\r",
+                "    })).to.be.true;\r",
+                "});\r",
+                "\r",
+                "pm.globals.set(\"allBooks\", pm.response.json());\r",
+                "pm.globals.set(\"deleteBookIdCounter\", 0);\r",
+                ""
+              ],
+              "_lastExecutionId": "485c8002-9bb8-41a6-8677-b02c9fb6052d"
+            }
+          }
+        ]
+      },
+      {
+        "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+        "name": "Delete book one by one",
+        "request": {
+          "url": {
+            "path": [
+              "books",
+              "{{bookId}}"
+            ],
+            "host": [
+              "{{endpoint}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "DELETE"
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "874e420f-84ff-4670-b549-1e97707b8bd9",
+              "type": "text/javascript",
+              "exec": [
+                "const books = pm.globals.get(\"allBooks\");\r",
+                "console.log(books)\r",
+                "pm.globals.set(\"totalBooksFromResponse\", books.length)\r",
+                "pm.globals.set(\"bookId\",books[pm.globals.get(\"deleteBookIdCounter\")]._id)"
+              ],
+              "_lastExecutionId": "06d1a989-e3a8-4302-b716-73ee3e36bd93"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "d0e8496d-c83a-479f-99ca-b522f547a776",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {\r",
+                "    pm.response.to.have.status(200);\r",
+                "});\r",
+                "\r",
+                "let deleteBookIdCounter = pm.globals.get(\"deleteBookIdCounter\")\r",
+                "\r",
+                "if(++deleteBookIdCounter < pm.globals.get(\"totalBooksFromResponse\")){\r",
+                "    pm.globals.set(\"deleteBookIdCounter\", deleteBookIdCounter)\r",
+                "    postman.setNextRequest(\"Delete book one by one\")\r",
+                "}else {\r",
+                "    pm.globals.unset(\"title\")\r",
+                "    pm.globals.unset(\"author\")\r",
+                "    pm.globals.unset(\"totalBooks\")\r",
+                "    pm.collectionVariables.set(\"currentBookId\", 0)\r",
+                "    pm.globals.unset(\"allBooks\")\r",
+                "    pm.globals.unset(\"totalBooksFromResponse\")\r",
+                "    pm.globals.unset(\"bookId\")\r",
+                "    pm.globals.unset(\"deleteBookIdCounter\")\r",
+                "}"
+              ],
+              "_lastExecutionId": "5a48dc91-0cdf-43f2-9e92-fa728ca085d1"
+            }
+          }
+        ]
+      }
+    ],
+    "event": [
+      {
+        "listen": "prerequest",
+        "script": {
+          "id": "15ed362f-d6fe-4366-9fa0-b5e8ca01b7ac",
+          "type": "text/javascript",
+          "exec": [
+            ""
+          ],
+          "_lastExecutionId": "61c53da1-72e7-4afe-88fa-4f7f4f752a77"
+        }
+      },
+      {
+        "listen": "test",
+        "script": {
+          "id": "1c3e8c5e-6740-40fb-800d-44e30fb84d1f",
+          "type": "text/javascript",
+          "exec": [
+            ""
+          ],
+          "_lastExecutionId": "e79bf647-fc36-4137-acaf-323c8e92e73f"
+        }
+      }
+    ],
+    "variable": [
+      {
+        "type": "any",
+        "value": "0",
+        "key": "currentBookId"
+      }
+    ],
+    "info": {
+      "_postman_id": "7d1ef991-3502-49e1-9e3a-c41775584b4a",
+      "name": "crudcrud",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    }
+  },
+  "environment": {
+    "_": {
+      "postman_variable_scope": "environment",
+      "postman_exported_at": "2021-10-15T16:08:06.928Z",
+      "postman_exported_using": "Postman/9.0.7"
+    },
+    "id": "a3a608b6-2639-4da1-8de4-6deaa12265d1",
+    "name": "test",
+    "values": [
+      {
+        "type": "any",
+        "value": "https://crudcrud.com/api/91c7e3f4d28d40748238504e8b8b8aa9",
+        "key": "endpoint"
+      },
+      {
+        "type": "any",
+        "value": "",
+        "key": "currentBookId"
+      }
+    ]
+  },
+  "globals": {
+    "id": "9eb91afa-fe4d-4e1a-92e7-8968df319fdc",
+    "values": []
+  },
+  "run": {
+    "stats": {
+      "iterations": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 7,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 27,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 7,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 7,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 7,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 17,
+        "pending": 0,
+        "failed": 0
+      },
+      "testScripts": {
+        "total": 14,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 13,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "timings": {
+      "responseAverage": 430.85714285714283,
+      "responseMin": 288,
+      "responseMax": 1273,
+      "responseSd": 343.8070175347247,
+      "dnsAverage": 0,
+      "dnsMin": 0,
+      "dnsMax": 0,
+      "dnsSd": 0,
+      "firstByteAverage": 0,
+      "firstByteMin": 0,
+      "firstByteMax": 0,
+      "firstByteSd": 0,
+      "started": 1634315120026,
+      "completed": 1634315123958
+    },
+    "executions": [
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 3,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "0bea0527-44ac-48f0-a37b-b395cad4fa19",
+          "httpRequestId": "9b15ab26-1dc0-4fc5-aa06-83bc7eb60f71"
+        },
+        "item": {
+          "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+          "name": "Create books from csv",
+          "request": {
+            "url": {
+              "path": [
+                "books"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"author\": \"{{author}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7af717c1-906d-4cb9-adb9-e45b8af93014",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = data.books;\r",
+                  "const totalBooks = data.books.length;\r",
+                  "pm.globals.set(\"totalBooks\", totalBooks);\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "pm.globals.set(\"title\", books[currentBookId].title);\r",
+                  "pm.globals.set(\"author\", books[currentBookId].author);"
+                ],
+                "_lastExecutionId": "ec0b8cc5-5743-49ad-a467-0b32d30847fb"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "f87a701e-abf3-472d-a70c-8360a3c29e82",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same title\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.eql(pm.globals.get(\"title\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same author\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.author).to.eql(pm.globals.get(\"author\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns a new id\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.not.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "let totalBooks = pm.globals.get(\"totalBooks\")\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "console.log(\"currentBookId=\"+currentBookId + \"<\" + \"totalBooks=\"+totalBooks)\r",
+                  "if(++currentBookId < totalBooks) {\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", currentBookId);\r",
+                  "    postman.setNextRequest(\"Create books from csv\")\r",
+                  "} else\r",
+                  "    postman.setNextRequest(\"Get all books\")"
+                ],
+                "_lastExecutionId": "b1f93fce-e907-4c0e-997d-bd630965e1c8"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "2f0ad77d-bbdb-47ca-8e3e-395057fb8b26",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "55",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n    \"title\": \"Title 1\",\r\n    \"author\": \"Author 1\"\r\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "2d67dc02-bef2-4c9e-8a53-966deddc1908",
+          "status": "Created",
+          "code": 201,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:20 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Location",
+              "value": "/api/91c7e3f4d28d40748238504e8b8b8aa9/books/616a1bf097069d03e848f023"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              49,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              49,
+              34,
+              44,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              48,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              51,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 1273,
+          "responseSize": 72
+        },
+        "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+        "assertions": [
+          {
+            "assertion": "Status code is 201 created",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same title",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same author",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns a new id",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 3,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "1c46faf0-47eb-43d2-aa07-384ea9680e5a",
+          "httpRequestId": "bbe8eef0-c6e5-4751-9152-fe3c40f169ce"
+        },
+        "item": {
+          "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+          "name": "Create books from csv",
+          "request": {
+            "url": {
+              "path": [
+                "books"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"author\": \"{{author}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7af717c1-906d-4cb9-adb9-e45b8af93014",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = data.books;\r",
+                  "const totalBooks = data.books.length;\r",
+                  "pm.globals.set(\"totalBooks\", totalBooks);\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "pm.globals.set(\"title\", books[currentBookId].title);\r",
+                  "pm.globals.set(\"author\", books[currentBookId].author);"
+                ],
+                "_lastExecutionId": "ec0b8cc5-5743-49ad-a467-0b32d30847fb"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "f87a701e-abf3-472d-a70c-8360a3c29e82",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same title\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.eql(pm.globals.get(\"title\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same author\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.author).to.eql(pm.globals.get(\"author\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns a new id\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.not.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "let totalBooks = pm.globals.get(\"totalBooks\")\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "console.log(\"currentBookId=\"+currentBookId + \"<\" + \"totalBooks=\"+totalBooks)\r",
+                  "if(++currentBookId < totalBooks) {\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", currentBookId);\r",
+                  "    postman.setNextRequest(\"Create books from csv\")\r",
+                  "} else\r",
+                  "    postman.setNextRequest(\"Get all books\")"
+                ],
+                "_lastExecutionId": "b1f93fce-e907-4c0e-997d-bd630965e1c8"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "13b34343-a3a6-4c62-97c6-3f65a0a547d4",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "55",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n    \"title\": \"Title 2\",\r\n    \"author\": \"Author 2\"\r\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "9cf887a9-8c42-4749-9cd4-38a908776c2d",
+          "status": "Created",
+          "code": 201,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:21 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Location",
+              "value": "/api/91c7e3f4d28d40748238504e8b8b8aa9/books/616a1bf197069d03e848f024"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              50,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              50,
+              34,
+              44,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              49,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              52,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 293,
+          "responseSize": 72
+        },
+        "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+        "assertions": [
+          {
+            "assertion": "Status code is 201 created",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same title",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same author",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns a new id",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 3,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "e7e6e7b4-c3ad-4cf9-8bb8-4f2b216f6f8a",
+          "httpRequestId": "4fe60904-95fa-4c1b-9576-885cff08e17a"
+        },
+        "item": {
+          "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+          "name": "Create books from csv",
+          "request": {
+            "url": {
+              "path": [
+                "books"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"author\": \"{{author}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7af717c1-906d-4cb9-adb9-e45b8af93014",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = data.books;\r",
+                  "const totalBooks = data.books.length;\r",
+                  "pm.globals.set(\"totalBooks\", totalBooks);\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "pm.globals.set(\"title\", books[currentBookId].title);\r",
+                  "pm.globals.set(\"author\", books[currentBookId].author);"
+                ],
+                "_lastExecutionId": "ec0b8cc5-5743-49ad-a467-0b32d30847fb"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "f87a701e-abf3-472d-a70c-8360a3c29e82",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 created\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same title\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.eql(pm.globals.get(\"title\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns the same author\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.author).to.eql(pm.globals.get(\"author\"));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API returns a new id\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.not.be.null;\r",
+                  "});\r",
+                  "\r",
+                  "let totalBooks = pm.globals.get(\"totalBooks\")\r",
+                  "let currentBookId = pm.collectionVariables.get(\"currentBookId\");\r",
+                  "console.log(\"currentBookId=\"+currentBookId + \"<\" + \"totalBooks=\"+totalBooks)\r",
+                  "if(++currentBookId < totalBooks) {\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", currentBookId);\r",
+                  "    postman.setNextRequest(\"Create books from csv\")\r",
+                  "} else\r",
+                  "    postman.setNextRequest(\"Get all books\")"
+                ],
+                "_lastExecutionId": "b1f93fce-e907-4c0e-997d-bd630965e1c8"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "94414356-4d08-49f3-937e-dc0688883471",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "55",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n    \"title\": \"Title 3\",\r\n    \"author\": \"Author 3\"\r\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "ea424083-aedd-45f1-bec3-8fc1e642a127",
+          "status": "Created",
+          "code": 201,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:21 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Location",
+              "value": "/api/91c7e3f4d28d40748238504e8b8b8aa9/books/616a1bf197069d03e848f025"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              51,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              51,
+              34,
+              44,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              49,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              53,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 292,
+          "responseSize": 72
+        },
+        "id": "010644ac-0ee4-4c18-8b41-490859e70a61",
+        "assertions": [
+          {
+            "assertion": "Status code is 201 created",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same title",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns the same author",
+            "skipped": false
+          },
+          {
+            "assertion": "API returns a new id",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "ccdbcae5-67d3-4dbb-9e51-2b365bda83c0",
+          "length": 3,
+          "cycles": 1,
+          "position": 1,
+          "iteration": 0,
+          "httpRequestId": "0ae192c3-a8ad-4393-b3bc-bdcc9825d35f"
+        },
+        "item": {
+          "id": "53d3dddf-fd6f-434f-9393-888079ba0c3c",
+          "name": "Get all books",
+          "request": {
+            "url": {
+              "path": [
+                "books"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "fbf23663-583e-459e-8944-bc53d0111155",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All books should have a title\", function () {\r",
+                  "    const books = pm.response.json()\r",
+                  "    pm.expect(books.every((book)=>{\r",
+                  "        return book.title !== undefined\r",
+                  "    })).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.globals.set(\"allBooks\", pm.response.json());\r",
+                  "pm.globals.set(\"deleteBookIdCounter\", 0);\r",
+                  ""
+                ],
+                "_lastExecutionId": "485c8002-9bb8-41a6-8677-b02c9fb6052d"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "b766d6d7-82f2-4fd4-8556-4944846036f3",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "44e9aaec-3be1-4223-bfcf-9e4eb0296765",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:22 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              91,
+              123,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              48,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              51,
+              34,
+              44,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              49,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              49,
+              34,
+              125,
+              44,
+              123,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              49,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              52,
+              34,
+              44,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              50,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              50,
+              34,
+              125,
+              44,
+              123,
+              34,
+              95,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              49,
+              54,
+              97,
+              49,
+              98,
+              102,
+              49,
+              57,
+              55,
+              48,
+              54,
+              57,
+              100,
+              48,
+              51,
+              101,
+              56,
+              52,
+              56,
+              102,
+              48,
+              50,
+              53,
+              34,
+              44,
+              34,
+              116,
+              105,
+              116,
+              108,
+              101,
+              34,
+              58,
+              34,
+              84,
+              105,
+              116,
+              108,
+              101,
+              32,
+              51,
+              34,
+              44,
+              34,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              34,
+              58,
+              34,
+              65,
+              117,
+              116,
+              104,
+              111,
+              114,
+              32,
+              51,
+              34,
+              125,
+              93
+            ]
+          },
+          "cookie": [],
+          "responseTime": 289,
+          "responseSize": 220
+        },
+        "id": "53d3dddf-fd6f-434f-9393-888079ba0c3c",
+        "assertions": [
+          {
+            "assertion": "Status code is 200",
+            "skipped": false
+          },
+          {
+            "assertion": "All books should have a title",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "e15905fb-3c3d-451e-872f-384750479064",
+          "length": 3,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "be4c81f3-db0e-4fb6-a58e-73774c303164"
+        },
+        "item": {
+          "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+          "name": "Delete book one by one",
+          "request": {
+            "url": {
+              "path": [
+                "books",
+                "{{bookId}}"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "874e420f-84ff-4670-b549-1e97707b8bd9",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = pm.globals.get(\"allBooks\");\r",
+                  "console.log(books)\r",
+                  "pm.globals.set(\"totalBooksFromResponse\", books.length)\r",
+                  "pm.globals.set(\"bookId\",books[pm.globals.get(\"deleteBookIdCounter\")]._id)"
+                ],
+                "_lastExecutionId": "06d1a989-e3a8-4302-b716-73ee3e36bd93"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "d0e8496d-c83a-479f-99ca-b522f547a776",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let deleteBookIdCounter = pm.globals.get(\"deleteBookIdCounter\")\r",
+                  "\r",
+                  "if(++deleteBookIdCounter < pm.globals.get(\"totalBooksFromResponse\")){\r",
+                  "    pm.globals.set(\"deleteBookIdCounter\", deleteBookIdCounter)\r",
+                  "    postman.setNextRequest(\"Delete book one by one\")\r",
+                  "}else {\r",
+                  "    pm.globals.unset(\"title\")\r",
+                  "    pm.globals.unset(\"author\")\r",
+                  "    pm.globals.unset(\"totalBooks\")\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", 0)\r",
+                  "    pm.globals.unset(\"allBooks\")\r",
+                  "    pm.globals.unset(\"totalBooksFromResponse\")\r",
+                  "    pm.globals.unset(\"bookId\")\r",
+                  "    pm.globals.unset(\"deleteBookIdCounter\")\r",
+                  "}"
+                ],
+                "_lastExecutionId": "5a48dc91-0cdf-43f2-9e92-fa728ca085d1"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books",
+              "616a1bf097069d03e848f023"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "382fd735-24aa-4023-89b8-5e077d42babc",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "DELETE"
+        },
+        "response": {
+          "id": "9a854d13-8cd1-41bc-af5f-723a2c913b72",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:22 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 288,
+          "responseSize": 0
+        },
+        "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+        "assertions": [
+          {
+            "assertion": "Status code is 200",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "7fc52ab3-e737-4dc7-babe-025cdba7bf07",
+          "length": 3,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "2200b8db-bf30-4e13-acca-615f27333977"
+        },
+        "item": {
+          "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+          "name": "Delete book one by one",
+          "request": {
+            "url": {
+              "path": [
+                "books",
+                "{{bookId}}"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "874e420f-84ff-4670-b549-1e97707b8bd9",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = pm.globals.get(\"allBooks\");\r",
+                  "console.log(books)\r",
+                  "pm.globals.set(\"totalBooksFromResponse\", books.length)\r",
+                  "pm.globals.set(\"bookId\",books[pm.globals.get(\"deleteBookIdCounter\")]._id)"
+                ],
+                "_lastExecutionId": "06d1a989-e3a8-4302-b716-73ee3e36bd93"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "d0e8496d-c83a-479f-99ca-b522f547a776",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let deleteBookIdCounter = pm.globals.get(\"deleteBookIdCounter\")\r",
+                  "\r",
+                  "if(++deleteBookIdCounter < pm.globals.get(\"totalBooksFromResponse\")){\r",
+                  "    pm.globals.set(\"deleteBookIdCounter\", deleteBookIdCounter)\r",
+                  "    postman.setNextRequest(\"Delete book one by one\")\r",
+                  "}else {\r",
+                  "    pm.globals.unset(\"title\")\r",
+                  "    pm.globals.unset(\"author\")\r",
+                  "    pm.globals.unset(\"totalBooks\")\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", 0)\r",
+                  "    pm.globals.unset(\"allBooks\")\r",
+                  "    pm.globals.unset(\"totalBooksFromResponse\")\r",
+                  "    pm.globals.unset(\"bookId\")\r",
+                  "    pm.globals.unset(\"deleteBookIdCounter\")\r",
+                  "}"
+                ],
+                "_lastExecutionId": "5a48dc91-0cdf-43f2-9e92-fa728ca085d1"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books",
+              "616a1bf197069d03e848f024"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "4af0458f-2f8b-4aa9-a9a7-fb1dbf97d2ca",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "DELETE"
+        },
+        "response": {
+          "id": "54577b2e-f8b1-4ee9-a2ba-8a90c851e2b7",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:23 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 290,
+          "responseSize": 0
+        },
+        "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+        "assertions": [
+          {
+            "assertion": "Status code is 200",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "62d7cfc8-b666-40ac-bd0b-ee116f686322",
+          "length": 3,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "9783f270-1b94-43a7-af80-9dae7e5090f9"
+        },
+        "item": {
+          "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+          "name": "Delete book one by one",
+          "request": {
+            "url": {
+              "path": [
+                "books",
+                "{{bookId}}"
+              ],
+              "host": [
+                "{{endpoint}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "874e420f-84ff-4670-b549-1e97707b8bd9",
+                "type": "text/javascript",
+                "exec": [
+                  "const books = pm.globals.get(\"allBooks\");\r",
+                  "console.log(books)\r",
+                  "pm.globals.set(\"totalBooksFromResponse\", books.length)\r",
+                  "pm.globals.set(\"bookId\",books[pm.globals.get(\"deleteBookIdCounter\")]._id)"
+                ],
+                "_lastExecutionId": "06d1a989-e3a8-4302-b716-73ee3e36bd93"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "d0e8496d-c83a-479f-99ca-b522f547a776",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let deleteBookIdCounter = pm.globals.get(\"deleteBookIdCounter\")\r",
+                  "\r",
+                  "if(++deleteBookIdCounter < pm.globals.get(\"totalBooksFromResponse\")){\r",
+                  "    pm.globals.set(\"deleteBookIdCounter\", deleteBookIdCounter)\r",
+                  "    postman.setNextRequest(\"Delete book one by one\")\r",
+                  "}else {\r",
+                  "    pm.globals.unset(\"title\")\r",
+                  "    pm.globals.unset(\"author\")\r",
+                  "    pm.globals.unset(\"totalBooks\")\r",
+                  "    pm.collectionVariables.set(\"currentBookId\", 0)\r",
+                  "    pm.globals.unset(\"allBooks\")\r",
+                  "    pm.globals.unset(\"totalBooksFromResponse\")\r",
+                  "    pm.globals.unset(\"bookId\")\r",
+                  "    pm.globals.unset(\"deleteBookIdCounter\")\r",
+                  "}"
+                ],
+                "_lastExecutionId": "5a48dc91-0cdf-43f2-9e92-fa728ca085d1"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "https",
+            "path": [
+              "api",
+              "91c7e3f4d28d40748238504e8b8b8aa9",
+              "books",
+              "616a1bf197069d03e848f025"
+            ],
+            "host": [
+              "crudcrud",
+              "com"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.28.4",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "dca92cb3-12b1-4586-87b7-bf755aa40814",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "crudcrud.com",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "DELETE"
+        },
+        "response": {
+          "id": "9e46ff6e-3595-4a7d-be3f-e1473c41bf21",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.14.2"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 16 Oct 2021 00:25:23 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+            },
+            {
+              "key": "Access-Control-Expose-Headers",
+              "value": "Content-Length,Content-Range"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 291,
+          "responseSize": 0
+        },
+        "id": "186c8af8-9994-41d9-9e42-0f9a59c06f66",
+        "assertions": [
+          {
+            "assertion": "Status code is 200",
+            "skipped": false
+          }
+        ]
+      }
+    ],
+    "transfers": {
+      "responseTotal": 436
+    },
+    "failures": [],
+    "error": null
+  }
+}
