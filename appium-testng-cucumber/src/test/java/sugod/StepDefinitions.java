@@ -20,6 +20,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import sugod.pageobjects.Utilities;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -79,7 +80,7 @@ public class StepDefinitions {
     public void he_is_redirected_to_the_home_screen() {
         WebDriverWait wait = new WebDriverWait(driver.get(), TIMEOUT_IN_SECONDS);
         MobileElement createSurveyButton = (MobileElement) wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@text,'CREATE SURVEY')]")));
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@text,'CREATE YOUR SURVEY')]")));
         Assert.assertTrue(createSurveyButton.isDisplayed());
     }
 
@@ -89,6 +90,9 @@ public class StepDefinitions {
                 By.xpath("//*[contains(@resource-id,'com.surveymonkey:id/bottom_navigation_small_container')][3]")).click();
 
         WebDriverWait wait = new WebDriverWait(driver.get(), TIMEOUT_IN_SECONDS);
+
+        Utilities.scrollToElementByPartialText(driver.get(),"SIGN OUT");
+
         MobileElement signoutButton = (MobileElement) wait.until(
                 ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@text,'SIGN OUT')]")));
 
