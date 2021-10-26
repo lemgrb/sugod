@@ -8,6 +8,7 @@ Quick start for different test automation tools.
 + Sample 2: **[appium-wdio](appium-wdio/README.md)** : node, javascript, appium, webdriver.io
 + Sample 3: **[postman](postman/README.md)** : node, js, postman, newman
 + Sample 4: **[jmeter](jmeter/README.md)** : Jmeter as functional API testing tool
+* Sample 5: **[selenium-testng](selenium-testng/README.md)** : selenium-java, testng, lombok. Also uses fluent interface and Page Object Model. Uses failsafe for parallel run
 
 ## Branching strategy
 
