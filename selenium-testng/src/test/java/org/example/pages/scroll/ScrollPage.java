@@ -14,15 +14,15 @@ public class ScrollPage extends Page {
 
     private final String DIRECT_URL = "http://formy-project.herokuapp.com/scroll";
 
-    private ScrollPageVerifyController keyPressVerifyController;
+    private ScrollPageVerifyController scrollPageVerifyController;
 
-    private ScrollPage(WebDriver driver, ScrollPageVerifyController keyPressVerifyController) {
+    private ScrollPage(WebDriver driver, ScrollPageVerifyController scrollPageVerifyController) {
         super(driver);
-        this.keyPressVerifyController = keyPressVerifyController;
+        this.scrollPageVerifyController = scrollPageVerifyController;
     }
 
     public ScrollPage goToPage() {
-        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL + "");
+        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL);
         driver.get().get(DIRECT_URL);
         return this;
     }
@@ -41,7 +41,7 @@ public class ScrollPage extends Page {
 
         // Scroll
         Actions actions = new Actions(driver.get());
-        actions.moveToElement(driver.get().findElement(name_textbox()));
+        actions.moveToElement(driver.get().findElement(name_textbox())).build().perform();
         driver.get().findElement(name_textbox()).sendKeys(formValues.get("name"));
         driver.get().findElement(date_textbox()).sendKeys(formValues.get("date"));
         return this;
@@ -52,7 +52,7 @@ public class ScrollPage extends Page {
      * Assert
      */
     public ScrollPageVerifyController verify() {
-        return keyPressVerifyController;
+        return scrollPageVerifyController;
     }
 
     /**

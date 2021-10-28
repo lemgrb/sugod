@@ -16,11 +16,11 @@ public class ModalPage extends Page {
 
     private final String DIRECT_URL = "http://formy-project.herokuapp.com/modal";
 
-    private ModalPageVerifyController keyPressVerifyController;
+    private ModalPageVerifyController modalVerifyController;
 
-    private ModalPage(WebDriver driver, ModalPageVerifyController keyPressVerifyController) {
+    private ModalPage(WebDriver driver, ModalPageVerifyController modalVerifyController) {
         super(driver);
-        this.keyPressVerifyController = keyPressVerifyController;
+        this.modalVerifyController = modalVerifyController;
     }
 
     public ModalPage goToPage() {
@@ -37,7 +37,7 @@ public class ModalPage extends Page {
      * Act
      */
 
-    public ModalPage openModal() throws InterruptedException {
+    public ModalPage openModal() {
         Log.info("["+Thread.currentThread().getName()+"] " + "Open modal");
 
         driver.get().findElement(modal_button()).click();
@@ -66,7 +66,7 @@ public class ModalPage extends Page {
      * Assert
      */
     public ModalPageVerifyController verify() {
-        return keyPressVerifyController;
+        return modalVerifyController;
     }
 
     /**

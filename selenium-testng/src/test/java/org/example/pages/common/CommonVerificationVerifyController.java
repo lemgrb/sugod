@@ -23,7 +23,7 @@ public class CommonVerificationVerifyController {
 
     // verify
     public CommonVerificationVerifyController textIsDisplayed(String text) {
-        Log.info("Verify text is displayed: " + text);
+        Log.info("Verify \"" + text +"\" is displayed using xpath: " + "//*[contains(text(),'"+text+"')]");
         Assert.assertTrue(driver.get().findElement(By.xpath("//*[contains(text(),'"+text+"')]")).isDisplayed(), "Verify text is displayed: " + text);
         return this;
     }

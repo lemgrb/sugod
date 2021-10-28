@@ -1,6 +1,8 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.pages.common.CommonVerification;
+import org.example.pages.dragdrop.DragAndDropPage;
 import org.example.pages.modal.ModalPage;
 import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.WebDriver;
@@ -73,7 +75,7 @@ public class FormyIT {
                 .allFieldsArePopulated(formValues);
     }
 
-    @Test(groups="sanity")
+    @Test
     public void verifyModalPage() throws InterruptedException {
 
         ModalPage.getModalPage(driver.get())
@@ -87,6 +89,21 @@ public class FormyIT {
                 .closeModal()
                 .verify()
                 .modalIsClosed();
+    }
+
+    @Test(groups="sanity")
+    public void verifyDragAndDropPage() throws InterruptedException {
+
+        DragAndDropPage.getDragAndDropPage(driver.get())
+                .goToPage()
+                .verify()
+                .pageIsDisplayed();
+
+        DragAndDropPage.getDragAndDropPage(driver.get())
+                .goToPage()
+                .dragImageThenDrop()
+                .verify()
+                .imageIsInTheBox();
     }
 
     @AfterMethod(groups = "sanity")

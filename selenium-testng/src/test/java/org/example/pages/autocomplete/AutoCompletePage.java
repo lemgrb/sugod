@@ -17,9 +17,9 @@ public class AutoCompletePage extends Page {
 
     private AutoCompletePageVerifyController autoCompletePageVerifyController;
 
-    private AutoCompletePage(WebDriver driver, AutoCompletePageVerifyController keyPressVerifyController) {
+    private AutoCompletePage(WebDriver driver, AutoCompletePageVerifyController autoCompletePageVerifyController) {
         super(driver);
-        this.autoCompletePageVerifyController = keyPressVerifyController;
+        this.autoCompletePageVerifyController = autoCompletePageVerifyController;
     }
 
     public AutoCompletePage goToPage() {
