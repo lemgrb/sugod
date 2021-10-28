@@ -1,7 +1,7 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.pages.common.CommonVerification;
+import org.example.pages.bootstrapdropdown.BootstrapDropdownPage;
 import org.example.pages.dragdrop.DragAndDropPage;
 import org.example.pages.modal.ModalPage;
 import org.example.pages.radiobutton.RadioButtonPage;
@@ -106,7 +106,7 @@ public class FormyIT {
                 .imageIsInTheBox();
     }
 
-    @Test(groups="sanity")
+    @Test
     public void verifyRadioButtonPage() throws InterruptedException {
 
         RadioButtonPage.getRadioButtonPage(driver.get())
@@ -119,6 +119,24 @@ public class FormyIT {
                 .selectOption("Radio button 3")
                 .verify()
                 .radioButtonIsSelected("Radio button 3");
+    }
+
+    @Test(groups="sanity")
+    public void verifySelectItemFromDropdown() throws InterruptedException {
+
+        BootstrapDropdownPage.getBootstrapDropdownPage(driver.get())
+                .goToPage()
+                .verify()
+                .pageIsDisplayed();
+
+        BootstrapDropdownPage.getBootstrapDropdownPage(driver.get())
+                .goToPage()
+                .selectDropdownItem("Modal");
+
+        ModalPage.getModalPage(driver.get())
+                .goToPage()
+                .verify()
+                .pageIsDisplayed();
     }
 
     @AfterMethod(groups = "sanity")
