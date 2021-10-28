@@ -1,4 +1,4 @@
-**SUT**: http://formy-project.herokuapp.com/autocomplete
+**SUT**: http://formy-project.herokuapp.com
 
 ## Based on Courses
 

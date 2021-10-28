@@ -11,6 +11,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <suiteXmlFile>testng.xml</suiteXmlFile>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
@@ -38,7 +39,12 @@
             <artifactId>slf4j-api</artifactId>
             <version>2.0.0-alpha5</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.29</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -63,7 +69,7 @@
                         </goals>
                         <configuration>
                             <suiteXmlFiles>
-                                <suiteXmlFile>testng.xml</suiteXmlFile>
+                                <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
                             </suiteXmlFiles>
                             <parallel>methods</parallel>
                             <threadCount>10</threadCount>

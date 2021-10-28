@@ -2,7 +2,7 @@
 <suite name="System Test" verbose="1" >
     <test name="Scenario 1">
         <classes>
-            <class name="FormyIT"/>
+            <class name="org.example.FormyIT"/>
         </classes>
     </test>
 </suite>
