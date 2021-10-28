@@ -14,7 +14,7 @@ import java.time.Duration;
 @Slf4j
 public class ModalPage extends Page {
 
-    private String directURL = "http://formy-project.herokuapp.com/modal";
+    private final String DIRECT_URL = "http://formy-project.herokuapp.com/modal";
 
     private ModalPageVerifyController keyPressVerifyController;
 
@@ -24,8 +24,8 @@ public class ModalPage extends Page {
     }
 
     public ModalPage goToPage() {
-        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + directURL + "");
-        driver.get().get(directURL);
+        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL + "");
+        driver.get().get(DIRECT_URL);
         return this;
     }
 

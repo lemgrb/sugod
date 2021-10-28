@@ -12,7 +12,7 @@ import java.util.Map;
 @Slf4j
 public class ScrollPage extends Page {
 
-    private String directURL = "http://formy-project.herokuapp.com/scroll";
+    private final String DIRECT_URL = "http://formy-project.herokuapp.com/scroll";
 
     private ScrollPageVerifyController keyPressVerifyController;
 
@@ -22,8 +22,8 @@ public class ScrollPage extends Page {
     }
 
     public ScrollPage goToPage() {
-        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + directURL + "");
-        driver.get().get(directURL);
+        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL + "");
+        driver.get().get(DIRECT_URL);
         return this;
     }
 

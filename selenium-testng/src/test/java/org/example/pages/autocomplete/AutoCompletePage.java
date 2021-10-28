@@ -13,7 +13,7 @@ import java.time.Duration;
 @Slf4j
 public class AutoCompletePage extends Page {
 
-    private final String directURL = "http://formy-project.herokuapp.com/autocomplete";
+    private final String DIRECT_URL = "http://formy-project.herokuapp.com/autocomplete";
 
     private AutoCompletePageVerifyController autoCompletePageVerifyController;
 
@@ -23,9 +23,9 @@ public class AutoCompletePage extends Page {
     }
 
     public AutoCompletePage goToPage() {
-        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + directURL);
+        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL);
 
-        driver.get().get(directURL);
+        driver.get().get(DIRECT_URL);
         return this;
     }
 

@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 @Slf4j
 public class KeyPressPage extends Page {
 
-    private String directURL = "http://formy-project.herokuapp.com/keypress";
+    private final String DIRECT_URL = "http://formy-project.herokuapp.com/keypress";
 
     private KeyPressPageVerifyController keyPressVerifyController;
 
@@ -19,9 +19,9 @@ public class KeyPressPage extends Page {
     }
 
     public KeyPressPage goToPage() {
-        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + directURL);
+        Log.info("["+Thread.currentThread().getName()+"] " + "Open page: " + DIRECT_URL);
 
-        driver.get().get(directURL);
+        driver.get().get(DIRECT_URL);
         return this;
     }
 
