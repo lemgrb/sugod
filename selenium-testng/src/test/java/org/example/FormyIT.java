@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.pages.common.CommonVerification;
 import org.example.pages.dragdrop.DragAndDropPage;
 import org.example.pages.modal.ModalPage;
+import org.example.pages.radiobutton.RadioButtonPage;
 import org.openqa.selenium.ImmutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -91,7 +92,6 @@ public class FormyIT {
                 .modalIsClosed();
     }
 
-    @Test(groups="sanity")
     public void verifyDragAndDropPage() throws InterruptedException {
 
         DragAndDropPage.getDragAndDropPage(driver.get())
@@ -104,6 +104,21 @@ public class FormyIT {
                 .dragImageThenDrop()
                 .verify()
                 .imageIsInTheBox();
+    }
+
+    @Test(groups="sanity")
+    public void verifyRadioButtonPage() throws InterruptedException {
+
+        RadioButtonPage.getRadioButtonPage(driver.get())
+                .goToPage()
+                .verify()
+                .pageIsDisplayed();
+
+        RadioButtonPage.getRadioButtonPage(driver.get())
+                .goToPage()
+                .selectOption("Radio button 3")
+                .verify()
+                .radioButtonIsSelected("Radio button 3");
     }
 
     @AfterMethod(groups = "sanity")
