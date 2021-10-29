@@ -1,5 +1,5 @@
 /**
- * This package contains all the pages for the SUT.
+ * This package contains all the org.example.pages for the SUT.
  * <p>
  * Each page has is paired with a "VerifyController" class.
  * But why am i doing this? This design is based on https://www.pluralsight.com/courses/automated-tests-java-fluent-interface-webdriver-selenium
@@ -11,4 +11,4 @@
  * @author lemuel
  * @version 0.1
  */
-package pages;
+package org.example.pages;

@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Sanity test" verbose="1" >
+    <test name="Sanity test">
+        <groups>
+            <run>
+                <include name="sanity" />
+            </run>
+        </groups>
+        <classes>
+            <class name="org.example.FormyIT" />
+        </classes>
+    </test>
+</suite>
