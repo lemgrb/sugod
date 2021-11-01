@@ -15,10 +15,12 @@
 9. Scheduler/CI
 10. Parallel execution
 11. Conventions
+12. Data driven
 
 ## Pre
-Install Python
-Install pip: 
+1. Install Python
+2. Install pip: 
+
 ```bash
 > pip install robotframework-seleniumlibrary
 > pip install robotframework-requests
@@ -47,4 +49,14 @@ Directory structure:
   /product-1
 ```
 
+## Locating webelements
+See [Keyword documentation#Locating elements](https://robotframework.org/SeleniumLibrary/SeleniumLibrary.html#Locating%20elements)
+
+## Run
 To run: `robot -d results tests/script.robot`
+To run with tags: `robot -d results -i sanity Tests\strapi-ecommerce-starter.robot`
+Pass a variable: `robot -d results -v BROWSER:chrome test/test.robot`
+Run all tests: `robot -d results -N "Some new name" tests`
+Run some test: `robot -d results -N "Some new name" tests/Project1`
+Run 1 test: `robot -t "Test test case name" tests/sample.robot" # Specify robot file
+Run 1 test: `robot -t "Test test case name" tests" # Specify folder
