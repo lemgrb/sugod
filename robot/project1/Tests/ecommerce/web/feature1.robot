@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Add to cart
+Documentation    Add to cart | No actual checking out
 Resource    ../../../Resources/Common.robot
 Resource    ../../../Resources/eCommerce.WebApp.robot
 Suite Setup    Prepare Test Data
@@ -11,13 +11,13 @@ Suite Teardown    Cleanup Test Data
 ${BROWSER} =    ff
 
 *** Test Cases ***
-Empty cart
+Logged out user should see empty cart by default
     [Tags]    regression
     eCommerce.WebApp.Open Homepage
     eCommerce.WebApp.View Cart
     eCommerce.WebApp.Verify cart is empty
     SeleniumLibrary.capture page screenshot
-Add a single product to cart
+Logged out should be able to add a single product to cart
     [Tags]    wip
     eCommerce.WebApp.Open Homepage
     ${first_sticker} =    set variable    React
@@ -25,7 +25,7 @@ Add a single product to cart
     eCommerce.WebApp.Checkout
     eCommerce.WebApp.Verify Checkout page is displayed
 
-Add two products to cart
+Logged out user should be able to add two products to cart
     [Tags]    regression
     eCommerce.WebApp.Open Homepage
     ${first_sticker} =    set variable    MongoDB
@@ -35,7 +35,7 @@ Add two products to cart
     eCommerce.WebApp.Checkout
     eCommerce.WebApp.Verify Checkout page is displayed
 
-Add multiple items of single product to cart
+Logged out user should be able to add more than quantity of the same product to cart
     [Tags]    regression
     eCommerce.WebApp.Open Homepage
     ${sticker} =    set variable    Docker

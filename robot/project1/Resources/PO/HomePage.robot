@@ -1,6 +1,9 @@
 *** Settings ***
 Library    SeleniumLibrary
 
+*** Variables ***
+${CART_BUTTON} =    css=button.snipcart-checkout
+
 *** Keywords ***
 Load
     go to    https://strapi-starter-next-ecommerce.vercel.app/
@@ -21,5 +24,5 @@ Verify Page Is Displayed
     wait until page contains    Back
 
 View Cart
-    click element    css=button.snipcart-checkout
+    click element    ${CART_BUTTON}
     wait until page contains    Cart summary

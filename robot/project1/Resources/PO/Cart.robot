@@ -1,10 +1,13 @@
 *** Settings ***
 Library    SeleniumLibrary
 
+*** Variables ***
+${PLUS_BUTTON} =    css=svg[title="Increment quantity"]
+
 *** Keywords ***
 # TODO: Add assertion for increment
 Add Another Item
-    click element    css=svg[title="Increment quantity"]
+    click element    ${PLUS_BUTTON}
 Checkout Cart
     click button    Checkout
 Continue Shoppping
