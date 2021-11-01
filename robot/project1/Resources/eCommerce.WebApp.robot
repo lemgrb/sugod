@@ -14,22 +14,17 @@ Open Homepage
 View Cart
     HomePage.View Cart
 Add Product To Cart
-    [Arguments]
-    HomePage.Filter All Back stickers
-    HomePage.Select React sticker
-    ProductPage.Verify Page Is Displayed
+    [Arguments]    ${sticker}
+    HomePage.Select sticker    ${sticker}
+    ProductPage.Verify Page Is Displayed    ${sticker}
     ProductPage.Add To Cart
-    Verify React Sticker Is Added To Cart
+    Verify Sticker Is Added To Cart    ${sticker}
 Add Another Item
     Cart.Add Another Item
 Add Another Product to Cart
+    [Arguments]    ${another_sticker}
     Cart.Continue Shoppping
-    HomePage.Filter All Front stickers
-    HomePage.Select Python sticker
-    ProductPage.Verify Page Is Displayed
-    ProductPage.Add To Cart
-    Verify React Sticker Is Added To Cart
-    Verify Python Sticker Is Added To Cart
+    Add Product To Cart    ${another_sticker}
 Checkout
     Cart.Checkout Cart
 Verify Checkout page is displayed

@@ -9,10 +9,10 @@ Checkout Cart
     click button    Checkout
 Continue Shoppping
     click button    Continue shopping
+    click image    home
 # TODO: Make generic
-Verify React Sticker Is Added To Cart
-    wait until page contains    React
-Verify Python Sticker Is Added To Cart
-    wait until page contains    React
+Verify Sticker Is Added To Cart
+    [Arguments]    ${sticker}
+    wait until page contains    ${sticker}
 Verify Cart Is Empty
     wait until page contains    Your cart is empty.

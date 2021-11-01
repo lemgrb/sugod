@@ -11,13 +11,11 @@ Filter All Back stickers
 Filter All Front stickers
     click link    Front
 
-Select React sticker
-    click element    xpath=//h4[contains(text(),"React")]
+Select sticker
+    [Arguments]    ${sticker}
+    click element    xpath=//h4[contains(text(),"${sticker}")]
     wait until page contains    Add to cart
 
-Select Python sticker
-    click element    xpath=//h4[contains(text(),"Python")]
-    wait until page contains    Add to cart
 
 Verify Page Is Displayed
     wait until page contains    Back
