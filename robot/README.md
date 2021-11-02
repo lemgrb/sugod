@@ -15,12 +15,12 @@
 9. Scheduler/CI
 10. Parallel execution
 11. Conventions
+
 12. Data driven
 
 ## Pre
 1. Install Python
 2. Install pip: 
-
 ```bash
 > pip install robotframework-seleniumlibrary
 > pip install robotframework-requests
@@ -65,3 +65,6 @@ See [Keyword documentation#Locating elements](https://robotframework.org/Seleniu
 ## For API Requests
 + See [https://github.com/MarketSquare/robotframework-requests/blob/master/atests/test_requests_on_session.robot](Sample requests)
 + See [Keywords documentation](https://marketsquare.github.io/robotframework-requests/doc/RequestsLibrary.html)
+=======
+To run: `robot -d results tests/script.robot`
+
