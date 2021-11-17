@@ -1,0 +1,2 @@
+var tags = ["single word"]
+var specs = [{"path":"specs\\datadriven.html","name":"Table driven execution","scenarios":[{"name":"Second Scenario","tags":[]},{"name":"Scenario","tags":[]}]},{"path":"specs\\example.html","name":"Specification Heading","scenarios":[{"name":"Vowel counts in single word","tags":["single word"]},{"name":"Vowel counts in multiple word","tags":[]}]}]
