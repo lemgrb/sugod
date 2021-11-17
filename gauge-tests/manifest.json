@@ -1,0 +1,10 @@
+{
+  "Language": "python",
+  "Plugins": [
+    "html-report",
+    "xml-report",
+    "flash",
+    "spectacle"
+  ],
+  "EnvironmentDir": ""
+}
