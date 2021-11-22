@@ -10,6 +10,7 @@ Quick start for different test automation tools.
 + Sample 4: **[jmeter](jmeter/README.md)** : Jmeter as functional API testing tool
 * Sample 5: **[selenium-testng](selenium-testng/README.md)** : selenium-java, testng, lombok. Also uses fluent interface and Page Object Model. Uses failsafe for parallel run
 * Sample 6: **[robotframework](robot/README.md)** robot framework. A great framework almost (if not) feature complete!
+* Sample 7: **[gauge-python](gauge-tests/README.md)** gauge-tests (Python): sample api and browser test (selenium, not taiko!)
 
 ## Branching strategy
 
