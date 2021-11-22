@@ -3,7 +3,6 @@
   "Plugins": [
     "html-report",
     "xml-report",
-    "flash",
     "spectacle"
   ],
   "EnvironmentDir": ""
